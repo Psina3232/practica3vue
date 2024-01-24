@@ -71,21 +71,30 @@ Vue.component('kanban-card', {
         },
         returnToInProgressWithReason() {
             const inProgressIndex = 1;
-
-            const returnReason = prompt('Укажите причину возврата карточки:');
-            
-            if (returnReason !== null) {
-                this.$parent.columns[inProgressIndex].cards.push({
-                    title: this.card.title,
-                    description: this.card.description,
-                    deadline: this.card.deadline,
-                    dateCreated: this.card.dateCreated,
-                    lastEdited: new Date().toLocaleString(),
-                    returnReason: returnReason
-                });
-
-                this.$parent.columns[this.columnIndex].cards.splice(this.cardIndex, 1);
+            let returnReason = '';
+        
+            while (returnReason === '' || returnReason === null) {
+                returnReason = prompt('Укажите причину возврата карточки в работу:');
+        
+                if (returnReason === null) {
+                    return;
+                }
+        
+                if (returnReason === '') {
+                    alert('Пожалуйста, укажите причину возврата.');
+                }
             }
+        
+            this.$parent.columns[inProgressIndex].cards.push({
+                title: this.card.title,
+                description: this.card.description,
+                deadline: this.card.deadline,
+                dateCreated: this.card.dateCreated,
+                lastEdited: new Date().toLocaleString(),
+                returnReason: returnReason
+            });
+        
+            this.$parent.columns[this.columnIndex].cards.splice(this.cardIndex, 1);
         }
     }
 });

@@ -1,12 +1,13 @@
 Vue.component('kanban-card', {
     props: ['card', 'columnIndex', 'cardIndex'],
     template: `
-        <div class="card">
+        <div :class="{'card': true, 'completed-on-time': card.status === 'Completed on time', 'overdue': card.status === 'Overdue'}">
             <div class="card-title">{{ card.title }}</div>
             <div class="card-date">Created: {{ card.dateCreated }}</div>
             <div class="card-date">Last Edited: {{ card.lastEdited }}</div>
             <div class="card-description">{{ card.description }}</div>
             <div class="card-deadline" v-if="card.deadline">Deadline: {{ card.deadline }}</div>
+            <div class="card-status" v-if="card.status">Status: {{ card.status }}</div>
             <div class="card-actions">
                 <button @click="editCard">Edit</button>
                 <button @click="deleteCard">Delete</button>
@@ -14,6 +15,7 @@ Vue.component('kanban-card', {
                 <button v-if="columnIndex === 1" @click="moveToTesting">Move to 'Testing'</button>
                 <button v-if="columnIndex === 2" @click="moveToDone">Move to 'Done'</button>
                 <button v-if="columnIndex === 2" @click="returnToInProgress">Return to 'In Progress'</button>
+                <button v-if="columnIndex === 3" @click="moveToCompletedWithDeadlineCheck">Move to 'Completed' with Deadline Check</button>
             </div>
         </div>
     `,
@@ -45,7 +47,6 @@ Vue.component('kanban-card', {
         returnToInProgress() {
             const inProgressIndex = 1;
 
-            // Проверяем, есть ли уже такая карточка во втором столбце
             const isCardAlreadyInInProgress = this.$parent.columns[inProgressIndex].cards.some(card => card.title === this.card.title);
 
             if (!isCardAlreadyInInProgress) {
@@ -57,6 +58,29 @@ Vue.component('kanban-card', {
                     lastEdited: new Date().toLocaleString()
                 });
             }
+
+            this.$parent.columns[this.columnIndex].cards.splice(this.cardIndex, 1);
+        },
+        moveToCompletedWithDeadlineCheck() {
+            const completedIndex = 3;
+
+            const deadline = new Date(this.card.deadline);
+            const currentDate = new Date();
+
+            if (currentDate > deadline) {
+                this.card.status = 'Overdue';
+            } else {
+                this.card.status = 'Completed on time';
+            }
+
+            this.$parent.columns[completedIndex].cards.push({
+                title: this.card.title,
+                description: this.card.description,
+                deadline: this.card.deadline,
+                dateCreated: this.card.dateCreated,
+                lastEdited: new Date().toLocaleString(),
+                status: this.card.status
+            });
 
             this.$parent.columns[this.columnIndex].cards.splice(this.cardIndex, 1);
         }
@@ -144,7 +168,6 @@ new Vue({
         returnToInProgress(originalCard, columnIndex, cardIndex) {
             const inProgressIndex = 1;
 
-            // Проверяем, есть ли уже такая карточка во втором столбце
             const isCardAlreadyInInProgress = this.columns[inProgressIndex].cards.some(card => card.title === originalCard.title);
 
             if (!isCardAlreadyInInProgress) {
@@ -156,6 +179,29 @@ new Vue({
                     lastEdited: new Date().toLocaleString()
                 });
             }
+
+            this.columns[columnIndex].cards.splice(cardIndex, 1);
+        },
+        moveToCompletedWithDeadlineCheck(originalCard, columnIndex, cardIndex) {
+            const completedIndex = 3;
+
+            const deadline = new Date(originalCard.deadline);
+            const currentDate = new Date();
+
+            if (currentDate > deadline) {
+                originalCard.status = 'Overdue';
+            } else {
+                originalCard.status = 'Completed on time';
+            }
+
+            this.columns[completedIndex].cards.push({
+                title: originalCard.title,
+                description: originalCard.description,
+                deadline: originalCard.deadline,
+                dateCreated: originalCard.dateCreated,
+                lastEdited: originalCard.lastEdited,
+                status: originalCard.status
+            });
 
             this.columns[columnIndex].cards.splice(cardIndex, 1);
         }

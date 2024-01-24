@@ -57,3 +57,11 @@ body {
 input, textarea, button {
     margin: 5px 0;
 }
+
+.completed-on-time {
+    background-color: #8ac878;
+}
+
+.overdue {
+    background-color: #e74c3c;
+}

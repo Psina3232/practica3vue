@@ -5,25 +5,30 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="css/main.css">
-    <title>Кабан доска</title>
+    <title>Канбан доска</title>
 </head>
 <body>
     <div id="app">
-        <div class="column" v-for="(column, columnIndex) in columns" :key="columnIndex">
-            <h2>{{ column.name }}</h2>
-            <div class="card" v-for="(card, cardIndex) in column.cards" :key="cardIndex">
-                <div class="card-title">{{ card.title }}</div>
-                <div class="card-date">Created: {{ card.dateCreated }}</div>
-                <div class="card-description">{{ card.description }}</div>
-                <div class="card-deadline" v-if="card.deadline">Deadline: {{ card.deadline }}</div>
-            </div>
-            
-            <div class="new-card-form" v-if="columnIndex === 0">
-                <h3>New Task</h3>
-                <input v-model="newCard.title" placeholder="Title" />
-                <textarea v-model="newCard.description" placeholder="Description"></textarea>
-                <input type="date" v-model="newCard.deadline" placeholder="Deadline" />
-                <button @click="addCard(columnIndex)">Add Task</button>
+        <div class="columns">
+            <div class="column" v-for="(column, columnIndex) in columns" :key="columnIndex">
+                <h2>{{ column.name }}</h2>
+                <kanban-card
+                    v-for="(card, cardIndex) in column.cards"
+                    :key="cardIndex"
+                    :card="card"
+                    :column-index="columnIndex"
+                    :card-index="cardIndex"
+                    @edit-card="editCard"
+                    @delete-card="deleteCard"
+                    @move-to-in-progress="moveToInProgress"
+                ></kanban-card>
+                <form v-if="columnIndex === 0" @submit.prevent="addCard(columnIndex)">
+                    <h3>New Task</h3>
+                    <input v-model="newCard.title" placeholder="Title" required />
+                    <input v-model="newCard.description" placeholder="Description" required />
+                    <input type="date" v-model="newCard.deadline" placeholder="Deadline" required />
+                    <button type="submit">Add Task</button>
+                </form>
             </div>
         </div>
     </div>

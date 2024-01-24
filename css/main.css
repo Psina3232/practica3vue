@@ -10,6 +10,10 @@ body {
     padding: 20px;
 }
 
+.columns{
+    display: flex;
+}
+
 .column {
     flex: 1;
     border: 1px solid #ccc;
@@ -27,7 +31,7 @@ body {
     margin-bottom: 10px;
 }
 
-.new-card-form {
+.new-card-form, .card-actions {
     margin-top: 10px;
 }
 

@@ -11,6 +11,7 @@ Vue.component('kanban-card', {
                 <button @click="editCard">Edit</button>
                 <button @click="deleteCard">Delete</button>
                 <button v-if="columnIndex === 0" @click="moveToInProgress">Move to 'In Progress'</button>
+                <button v-if="columnIndex === 1" @click="moveToTesting">Move to 'Testing'</button>
             </div>
         </div>
     `,
@@ -23,6 +24,9 @@ Vue.component('kanban-card', {
         },
         moveToInProgress() {
             this.$emit('move-to-in-progress', this.card, this.columnIndex, this.cardIndex);
+        },
+        moveToTesting() {
+            this.$emit('move-to-testing', this.card, this.columnIndex, this.cardIndex);
         }
     }
 });
@@ -83,6 +87,19 @@ new Vue({
             const inProgressIndex = 1;
 
             this.columns[inProgressIndex].cards.push({
+                title: originalCard.title,
+                description: originalCard.description,
+                deadline: originalCard.deadline,
+                dateCreated: originalCard.dateCreated,
+                lastEdited: originalCard.lastEdited
+            });
+
+            this.columns[columnIndex].cards.splice(cardIndex, 1);
+        },
+        moveToTesting(originalCard, columnIndex, cardIndex) {
+            const testingIndex = 2;
+
+            this.columns[testingIndex].cards.push({
                 title: originalCard.title,
                 description: originalCard.description,
                 deadline: originalCard.deadline,

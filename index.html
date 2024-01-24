@@ -21,6 +21,7 @@
                     @edit-card="editCard"
                     @delete-card="deleteCard"
                     @move-to-in-progress="moveToInProgress"
+                    @move-to-testing="moveToTesting"
                 ></kanban-card>
                 <form v-if="columnIndex === 0" @submit.prevent="addCard(columnIndex)">
                     <h3>New Task</h3>

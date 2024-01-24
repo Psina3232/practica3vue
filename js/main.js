@@ -21,6 +21,7 @@ new Vue({
         ],
         newCard: { title: '', description: '', deadline: '' }
     },
+    
     methods: {
         addCard(columnIndex) {
             if (columnIndex === 0) {

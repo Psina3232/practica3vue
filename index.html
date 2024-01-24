@@ -17,6 +17,7 @@
                 <div class="card-description">{{ card.description }}</div>
                 <div class="card-deadline" v-if="card.deadline">Deadline: {{ card.deadline }}</div>
             </div>
+            
             <div class="new-card-form" v-if="columnIndex === 0">
                 <h3>New Task</h3>
                 <input v-model="newCard.title" placeholder="Title" />

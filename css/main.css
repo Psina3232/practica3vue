@@ -15,12 +15,13 @@ body {
 }
 
 .column {
+    width: 350px;
     flex: 1;
-    border: 1px solid #ccc;
+    border: 1px solid #c9c9c9;
     border-radius: 5px;
     padding: 10px;
     margin: 0 10px;
-    background-color: #f9f9f9;
+    background-color: #ffffff;
 }
 
 .card {
@@ -64,4 +65,30 @@ input, textarea, button {
 
 .overdue {
     background-color: #e74c3c;
+}
+
+.deadline-status {
+    border: 2px solid #3498db; 
+}
+
+input{
+    height: 30px;
+
+    border-radius: 5px;
+    border: 1px solid #c9c9c9;
+}
+
+button{
+    height: 30px;
+    border: 1px solid #c9c9c9;
+    border-radius: 5px;
+}
+
+h2{
+    text-align: center;
+}
+
+h3{
+    padding-top: 20px;
+    text-align: center;
 }

@@ -1,29 +1,37 @@
 Vue.component('kanban-card', {
     props: ['card', 'columnIndex', 'cardIndex'],
     template: `
-        <div :class="{'card': true, 'completed-on-time': card.status === 'Completed on time', 'overdue': card.status === 'Overdue'}">
+        <div :class="{
+            'card': true,
+            'completed-on-time': card.status === 'Completed on time',
+            'overdue': card.status === 'Overdue',
+            'readonly': columnIndex === 3
+        }">
+
             <div class="card-title">{{ card.title }}</div>
-            <div class="card-date">Created: {{ card.dateCreated }}</div>
-            <div class="card-date">Last Edited: {{ card.lastEdited }}</div>
+            <div class="card-date">Создано: {{ card.dateCreated }}</div>
+            <div class="card-date">Последнее редактирование: {{ card.lastEdited }}</div>
             <div class="card-description">{{ card.description }}</div>
-            <div class="card-deadline" v-if="card.deadline">Deadline: {{ card.deadline }}</div>
-            <div class="card-status" v-if="card.status">Status: {{ card.status }}</div>
-            <div class="card-actions">
-                <button @click="editCard">Edit</button>
-                <button @click="deleteCard">Delete</button>
-                <button v-if="columnIndex === 0" @click="moveToInProgress">Move to 'In Progress'</button>
-                <button v-if="columnIndex === 1" @click="moveToTesting">Move to 'Testing'</button>
-                <button v-if="columnIndex === 2" @click="moveToDone">Move to 'Done'</button>
-                <button v-if="columnIndex === 2" @click="returnToInProgress">Return to 'In Progress'</button>
-                <button v-if="columnIndex === 3" @click="moveToCompletedWithDeadlineCheck">Move to 'Completed' with Deadline Check</button>
+            <div class="card-deadline" v-if="card.deadline">Дедлайн: {{ card.deadline }}</div>
+            <div class="card-status" v-if="card.status">Статус: 
+                {{ columnIndex === 3 && card.status === 'Completed on time' ? 'Выполнено' : '' }}
+                {{ columnIndex === 3 && card.status === 'Overdue' ? 'Просрочено' : '' }}
+                {{ columnIndex !== 3 ? card.status : '' }}
             </div>
-        </div>
-    `,
+            <div class="card-actions">
+                <button v-if="columnIndex !== 3" @click="editCard">Редактировать</button>
+                <button @click="deleteCard">Удалить</button>
+                <button v-if="columnIndex === 0" @click="moveToInProgress">Дальше</button>
+                <button v-if="columnIndex === 1" @click="moveToTesting">Дальше</button>
+                <button v-if="columnIndex === 2" @click="moveToDone">Дальше</button>
+                <button v-if="columnIndex === 2" @click="returnToInProgressWithReason">Назад</button>
+                </div>
+            `,
     methods: {
         editCard() {
-            const updatedTitle = prompt('Enter new title', this.card.title);
-            const updatedDescription = prompt('Enter new description', this.card.description);
-            const updatedDeadline = prompt('Enter new deadline', this.card.deadline);
+            const updatedTitle = prompt('Редактировать заголовок', this.card.title);
+            const updatedDescription = prompt('Редактировать описание', this.card.description);
+            const updatedDeadline = prompt('Редактировать дедлайн', this.card.deadline);
 
             if (updatedTitle !== null && updatedDescription !== null && updatedDeadline !== null) {
                 this.card.title = updatedTitle;
@@ -61,31 +69,27 @@ Vue.component('kanban-card', {
 
             this.$parent.columns[this.columnIndex].cards.splice(this.cardIndex, 1);
         },
-        moveToCompletedWithDeadlineCheck() {
-            const completedIndex = 3;
+        returnToInProgressWithReason() {
+            const inProgressIndex = 1;
 
-            const deadline = new Date(this.card.deadline);
-            const currentDate = new Date();
+            const returnReason = prompt('Укажите причину возврата карточки:');
+            
+            if (returnReason !== null) {
+                this.$parent.columns[inProgressIndex].cards.push({
+                    title: this.card.title,
+                    description: this.card.description,
+                    deadline: this.card.deadline,
+                    dateCreated: this.card.dateCreated,
+                    lastEdited: new Date().toLocaleString(),
+                    returnReason: returnReason
+                });
 
-            if (currentDate > deadline) {
-                this.card.status = 'Overdue';
-            } else {
-                this.card.status = 'Completed on time';
+                this.$parent.columns[this.columnIndex].cards.splice(this.cardIndex, 1);
             }
-
-            this.$parent.columns[completedIndex].cards.push({
-                title: this.card.title,
-                description: this.card.description,
-                deadline: this.card.deadline,
-                dateCreated: this.card.dateCreated,
-                lastEdited: new Date().toLocaleString(),
-                status: this.card.status
-            });
-
-            this.$parent.columns[this.columnIndex].cards.splice(this.cardIndex, 1);
         }
     }
 });
+
 
 new Vue({
     el: '#app',
@@ -121,7 +125,7 @@ new Vue({
             this.newCard = { title: '', description: '', deadline: '' };
         },
         deleteCard(columnIndex, cardIndex) {
-            const confirmation = confirm('Are you sure you want to delete this card?');
+            const confirmation = confirm('Вы действительно хотите удалить карту?');
             if (confirmation) {
                 this.columns[columnIndex].cards.splice(cardIndex, 1);
             }
@@ -155,12 +159,22 @@ new Vue({
         moveToDone(originalCard, columnIndex, cardIndex) {
             const doneIndex = 3;
 
+            const deadline = new Date(originalCard.deadline);
+            const currentDate = new Date();
+
+            if (currentDate > deadline) {
+                originalCard.status = 'Overdue';
+            } else {
+                originalCard.status = 'Completed on time';
+            }
+
             this.columns[doneIndex].cards.push({
                 title: originalCard.title,
                 description: originalCard.description,
                 deadline: originalCard.deadline,
                 dateCreated: originalCard.dateCreated,
-                lastEdited: originalCard.lastEdited
+                lastEdited: originalCard.lastEdited,
+                status: originalCard.status
             });
 
             this.columns[columnIndex].cards.splice(cardIndex, 1);
@@ -179,29 +193,6 @@ new Vue({
                     lastEdited: new Date().toLocaleString()
                 });
             }
-
-            this.columns[columnIndex].cards.splice(cardIndex, 1);
-        },
-        moveToCompletedWithDeadlineCheck(originalCard, columnIndex, cardIndex) {
-            const completedIndex = 3;
-
-            const deadline = new Date(originalCard.deadline);
-            const currentDate = new Date();
-
-            if (currentDate > deadline) {
-                originalCard.status = 'Overdue';
-            } else {
-                originalCard.status = 'Completed on time';
-            }
-
-            this.columns[completedIndex].cards.push({
-                title: originalCard.title,
-                description: originalCard.description,
-                deadline: originalCard.deadline,
-                dateCreated: originalCard.dateCreated,
-                lastEdited: originalCard.lastEdited,
-                status: originalCard.status
-            });
 
             this.columns[columnIndex].cards.splice(cardIndex, 1);
         }

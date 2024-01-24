@@ -26,11 +26,11 @@
                     @return-to-in-progress="returnToInProgress"
                 ></kanban-card>
                 <form v-if="columnIndex === 0" @submit.prevent="addCard(columnIndex)">
-                    <h3>New Task</h3>
-                    <input v-model="newCard.title" placeholder="Title" required />
-                    <input v-model="newCard.description" placeholder="Description" required />
-                    <input type="date" v-model="newCard.deadline" placeholder="Deadline" required />
-                    <button type="submit">Add Task</button>
+                    <h3>Новая задача</h3>
+                    <input v-model="newCard.title" placeholder="Заголовок" required />
+                    <input v-model="newCard.description" placeholder="Описание" required />
+                    <input type="date" v-model="newCard.deadline" placeholder="Дедлайн" required />
+                    <button type="submit">Добавить</button>
                 </form>
             </div>
         </div>

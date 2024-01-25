@@ -2,6 +2,7 @@ body {
     font-family: 'Arial', sans-serif;
     margin: 0;
     padding: 0;
+    background-color: #6bb2d3;
 }
 
 #app {
@@ -18,7 +19,7 @@ body {
     width: 350px;
     flex: 1;
     border: 1px solid #c9c9c9;
-    border-radius: 5px;
+    border-radius: 25px;
     padding: 10px;
     margin: 0 10px;
     background-color: #ffffff;
@@ -26,7 +27,7 @@ body {
 
 .card {
     border: 1px solid #ddd;
-    border-radius: 5px;
+    border-radius: 25px;
     background-color: #fff;
     padding: 10px;
     margin-bottom: 10px;
@@ -41,18 +42,18 @@ body {
 }
 
 .card-date {
-    color: #666;
+    color: rgb(0, 0, 0);
     font-size: 12px;
 }
 
 .card-description {
     margin-top: 8px;
-    color: #333;
+    color: rgb(0, 0, 0);
 }
 
 .card-deadline {
     margin-top: 8px;
-    color: #d9534f;
+    color: #000000;
 }
 
 input, textarea, button {
@@ -64,7 +65,7 @@ input, textarea, button {
 }
 
 .overdue {
-    background-color: #e74c3c;
+    background-color: #fa786a;
 }
 
 .deadline-status {
@@ -74,14 +75,14 @@ input, textarea, button {
 input{
     height: 30px;
 
-    border-radius: 5px;
+    border-radius: 25px;
     border: 1px solid #c9c9c9;
 }
 
 button{
     height: 30px;
     border: 1px solid #c9c9c9;
-    border-radius: 5px;
+    border-radius: 25px;
 }
 
 h2{
@@ -92,3 +93,5 @@ h3{
     padding-top: 20px;
     text-align: center;
 }
+
+
